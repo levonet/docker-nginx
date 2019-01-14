@@ -1,10 +1,11 @@
-FROM alpine:edge
+FROM alpine:edge AS build
 
-ARG NGINX_VERSION
+ENV NGINX_VERSION 1.14.2
+
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-	&& apk add --no-cache --repository "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" --virtual .build-deps \
+	&& apk add --no-cache --repository "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
 		gcc \
 		libc-dev \
 		make \
@@ -14,10 +15,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		linux-headers \
 		curl \
 		gnupg1 \
-		libxslt-dev \
-		gd-dev \
-		brotli-dev \
 		git \
+		gettext \
 	&& curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz \
 	&& curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc -o nginx.tar.gz.asc \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -57,11 +56,10 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	# Redis
 	&& mkdir -p /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 	&& curl -fSL https://people.freebsd.org/~osa/ngx_http_redis-0.3.9.tar.gz -o ngx_http_redis.tar.gz \
-	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1
-
-RUN cd /usr/src/nginx-${NGINX_VERSION} \
+	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
+	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
-		NGX_LD_OPT="-lbrotli" ./configure \
+		./configure \
 			--prefix=/etc/nginx \
 			--sbin-path=/usr/sbin/nginx \
 			--modules-path=/usr/lib/nginx/modules \
@@ -77,65 +75,63 @@ RUN cd /usr/src/nginx-${NGINX_VERSION} \
 			--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 			--user=nginx \
 			--group=nginx \
+			--with-threads \
+			--with-file-aio \
 			--with-http_ssl_module \
+			--with-http_v2_module \
 			--with-http_realip_module \
 			--with-http_addition_module \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
-			--with-http_secure_link_module \
 			--with-http_auth_request_module \
-			--with-threads \
+			--with-http_secure_link_module \
+			--with-http_degradation_module \
 			--with-stream \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--with-stream_realip_module \
 			--with-compat \
-			--with-file-aio \
-			--with-http_v2_module \
+			--with-pcre \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
-			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
-			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& rm -rf /etc/nginx/html/ \
 	&& mkdir /etc/nginx/conf.d/ \
-	&& mkdir /etc/nginx/conf.d/sites-enabled/ \
+	&& mkdir /etc/nginx/sites-enabled/ \
 	&& mkdir -p /usr/share/nginx/html/ \
 	&& install -m644 html/index.html /usr/share/nginx/html/ \
 	&& install -m644 html/50x.html /usr/share/nginx/html/ \
 	&& ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
-	&& strip /usr/sbin/nginx* \
-	&& rm -rf /usr/src/nginx-${NGINX_VERSION} \
-	\
-	# Bring in gettext so we can get `envsubst`, then throw
-	# the rest away. To do this, we need to install `gettext`
-	# then move `envsubst` out of the way so `gettext` can
-	# be deleted completely, then move `envsubst` back.
-	&& apk add --no-cache --virtual .gettext gettext \
-	&& mv /usr/bin/envsubst /tmp/ \
-	\
-	&& runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /usr/lib/nginx/modules/*.so /tmp/envsubst \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-	&& apk add --no-cache --virtual .nginx-rundeps $runDeps \
-	&& apk del .build-deps \
-	&& apk del .gettext \
-	&& mv /tmp/envsubst /usr/local/bin/ \
-	\
-	# Bring in tzdata so users could set the timezones through the environment
-	# variables
-	&& apk add --no-cache tzdata \
-	\
-	# forward request and error logs to docker log collector
-	&& ln -sf /dev/stdout /var/log/nginx/access.log \
-	&& ln -sf /dev/stderr /var/log/nginx/error.log
+	&& strip /usr/sbin/nginx \
+	&& strip /usr/lib/nginx/modules/*.so
+
+FROM alpine:edge
+
+COPY --from=build /etc/nginx /etc/nginx
+COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
+COPY --from=build /usr/bin/envsubst /usr/local/bin/envsubst
+COPY --from=build /usr/lib/nginx/ /usr/lib/nginx/
+COPY --from=build /usr/share/nginx /usr/share/nginx
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+
+RUN apk add --no-cache \
+		musl \
+		pcre \
+		libssl1.1 \
+		libcrypto1.1 \
+		zlib \
+		libintl \
+		tzdata \
+	&& addgroup -S nginx \
+	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+	&& mkdir -p /var/log/nginx \
+	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80
 

@@ -1,6 +1,6 @@
 FROM alpine:edge AS build
 
-ENV NGINX_VERSION 1.14.2
+ENV NGINX_VERSION 1.15.8
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
@@ -38,19 +38,17 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm nginx.tar.gz \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
-	# https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng
+	# Sticky
 	&& mkdir -p /usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 	&& curl -fSL https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz -o nginx-sticky-module-ng.tar.gz \
 	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng -f nginx-sticky-module-ng.tar.gz --strip 1 \
 	\
-	# https://github.com/2Fast2BCn/nginx_upstream_check_module
-	&& mkdir -p /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
-	&& curl -fSL https://github.com/2Fast2BCn/nginx_upstream_check_module/archive/master.tar.gz -o nginx_upstream_check_module.tar.gz \
-	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module -f nginx_upstream_check_module.tar.gz --strip 1 \
+	# Upstream health check
+	&& git clone https://github.com/2Fast2BCn/nginx_upstream_check_module.git --depth=1 \
 	&& patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.14.0+.patch \
 	\
 	# Brotli
-	&& git clone https://github.com/google/ngx_brotli --depth=1 \
+	&& git clone https://github.com/google/ngx_brotli.git --depth=1 \
 	&& (cd ngx_brotli; git submodule update --init) \
 	\
 	# Redis

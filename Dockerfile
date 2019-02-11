@@ -2,6 +2,7 @@ FROM alpine:edge AS build
 
 ENV NGINX_VERSION 1.15.8
 
+COPY *.patch /tmp/
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
@@ -56,6 +57,10 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& curl -fSL https://people.freebsd.org/~osa/ngx_http_redis-0.3.9.tar.gz -o ngx_http_redis.tar.gz \
 	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
 	\
+	# A forward proxy module for CONNECT request handling
+	&& git clone https://github.com/chobits/ngx_http_proxy_connect_module.git --depth=1 \
+	&& patch -p1 < /tmp/proxy_connect_rewrite_10158.patch \
+	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
 		./configure \
 			--prefix=/etc/nginx \
@@ -92,6 +97,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--with-pcre \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
+			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \

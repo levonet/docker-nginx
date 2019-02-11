@@ -1,6 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
-- [`1.15.8-alpine`, `1.15-alpine`, `latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.8/Dockerfile)
+- [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
+- [`1.15.8-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.8/Dockerfile)
 - [`1.14.2-alpine`, `1.14-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.14.2/Dockerfile)
 
 # NGINX build with load balancer modules
@@ -15,6 +16,7 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - with [Upstream health check module](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme)
 - with [Brotli dynamic module](https://github.com/google/ngx_brotli#readme)
 - with [Redis dynamic module](https://www.nginx.com/resources/wiki/modules/redis/)
+- with [A forward proxy module](https://github.com/chobits/ngx_http_proxy_connect_module)
 - with degradation module
 - using `/etc/nginx/sites-enabled/` for virtual host configuration (like Ubuntu)
 - without http_xslt, http_image_filter, http_geoip, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, http_stub_status, mail, mail_ssl, stream_geoip modules

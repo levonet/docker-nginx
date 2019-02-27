@@ -1,7 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.15.8-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.8/Dockerfile)
+- [`1.15.9-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.9/Dockerfile)
 - [`1.14.2-alpine`, `1.14-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.14.2/Dockerfile)
 
 # NGINX build with load balancer modules

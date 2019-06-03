@@ -1,5 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
+[![](https://images.microbadger.com/badges/image/levonet/nginx.svg)](https://microbadger.com/images/levonet/nginx "Get your own image badge on microbadger.com")
+
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
 - [`1.17.0-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.0/Dockerfile)
 - [`1.16.0-alpine`, `1.16-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.16.0/Dockerfile)

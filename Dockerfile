@@ -89,6 +89,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--with-http_auth_request_module \
 			--with-http_secure_link_module \
 			--with-http_degradation_module \
+			--with-http_stub_status_module \
 			--with-stream \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \

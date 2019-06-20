@@ -78,23 +78,24 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 			--user=nginx \
 			--group=nginx \
-			--with-threads \
+			--with-compat \
 			--with-file-aio \
-			--with-http_ssl_module \
-			--with-http_v2_module \
-			--with-http_realip_module \
 			--with-http_addition_module \
+			--with-http_auth_request_module \
+			--with-http_degradation_module \
 			--with-http_gunzip_module \
 			--with-http_gzip_static_module \
-			--with-http_auth_request_module \
+			--with-http_realip_module \
 			--with-http_secure_link_module \
-			--with-http_degradation_module \
+			--with-http_ssl_module \
+			--with-http_stub_status_module \
+			--with-http_v2_module \
+			--with-pcre \
 			--with-stream \
+			--with-stream_realip_module \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
-			--with-stream_realip_module \
-			--with-compat \
-			--with-pcre \
+			--with-threads \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \

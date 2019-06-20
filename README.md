@@ -23,7 +23,7 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - with [A forward proxy module](https://github.com/chobits/ngx_http_proxy_connect_module)
 - with degradation module
 - using `/etc/nginx/sites-enabled/` for virtual host configuration (like Ubuntu)
-- without http_xslt, http_image_filter, http_geoip, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, http_stub_status, mail, mail_ssl, stream_geoip modules
+- without http_xslt, http_image_filter, http_geoip, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, mail, mail_ssl, stream_geoip modules
 
 ## How to use this image
 

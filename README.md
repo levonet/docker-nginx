@@ -18,14 +18,15 @@ Nginx binaries are compiled to leverage SSE 4.2 instruction set.
 The difference from the [official Nginx docker image](https://hub.docker.com/_/nginx):
 
 - x86-64 CPU architecture only
-- with [Sticky module](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng)
-- with [Upstream health check module](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme)
-- with [Brotli dynamic module](https://github.com/google/ngx_brotli#readme)
-- with [Redis dynamic module](https://www.nginx.com/resources/wiki/modules/redis/)
-- with [A forward proxy module](https://github.com/chobits/ngx_http_proxy_connect_module)
+- with [Sticky](https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng) module
+- with [Upstream health check](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme) module
+- with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module
+- with [Redis](https://www.nginx.com/resources/wiki/modules/redis/) dynamic module
+- with [A forward proxy](https://github.com/chobits/ngx_http_proxy_connect_module) module
+- with [njs scripting language](http://nginx.org/en/docs/njs/) dynamic modules
 - with degradation module
 - using `/etc/nginx/sites-enabled/` for virtual host configuration (like Ubuntu)
-- without http_xslt, http_image_filter, http_geoip, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, mail, mail_ssl, stream_geoip modules
+- without modules: http_xslt, http_image_filter, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, mail, mail_ssl, http_geoip, stream_geoip
 
 ## How to use this image
 

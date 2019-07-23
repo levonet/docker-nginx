@@ -1,6 +1,8 @@
 FROM alpine:edge AS build
 
 ENV NGINX_VERSION 1.17.1
+ENV REDIS_MODULE_VERSION 0.3.9
+ENV NJS_MODULE_VERSION 0.3.3
 
 COPY *.patch /tmp/
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
@@ -54,12 +56,15 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	\
 	# Redis
 	&& mkdir -p /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
-	&& curl -fSL https://people.freebsd.org/~osa/ngx_http_redis-0.3.9.tar.gz -o ngx_http_redis.tar.gz \
+	&& curl -fSL https://people.freebsd.org/~osa/ngx_http_redis-${REDIS_MODULE_VERSION}.tar.gz -o ngx_http_redis.tar.gz \
 	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
 	\
 	# A forward proxy module for CONNECT request handling
 	&& git clone https://github.com/chobits/ngx_http_proxy_connect_module.git --depth=1 \
 	&& patch -p1 < /tmp/proxy_connect_rewrite_10158.patch \
+	\
+	# njs scripting language
+	&& git clone -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git --depth=1 \
 	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
 		./configure \
@@ -101,6 +106,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& rm -rf /etc/nginx/html/ \

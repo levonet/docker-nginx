@@ -9,17 +9,18 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
 	&& apk add --no-cache --repository "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
+		curl \
 		gcc \
+		gettext \
+		git \
+		gnupg1 \
 		libc-dev \
+		linux-headers \
 		make \
 		openssl-dev \
 		pcre-dev \
+		readline-dev \
 		zlib-dev \
-		linux-headers \
-		curl \
-		gnupg1 \
-		git \
-		gettext \
 	&& curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz \
 	&& curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc -o nginx.tar.gz.asc \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -65,6 +66,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	\
 	# njs scripting language
 	&& git clone -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git --depth=1 \
+	&& (cd njs; CFLAGS="-Ofast -m64 -march=x86-64 -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer" ./configure; make njs) \
 	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
 		./configure \
@@ -115,7 +117,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& mkdir -p /usr/share/nginx/html/ \
 	&& install -m644 html/index.html /usr/share/nginx/html/ \
 	&& install -m644 html/50x.html /usr/share/nginx/html/ \
+	&& install -m755 njs/build/njs /usr/bin/ \
 	&& ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
+	&& strip /usr/bin/njs \
 	&& strip /usr/sbin/nginx \
 	&& strip /usr/lib/nginx/modules/*.so
 
@@ -123,6 +127,7 @@ FROM alpine:edge
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
+COPY --from=build /usr/bin/njs /usr/bin/njs
 COPY --from=build /usr/bin/envsubst /usr/local/bin/envsubst
 COPY --from=build /usr/lib/nginx/ /usr/lib/nginx/
 COPY --from=build /usr/share/nginx /usr/share/nginx
@@ -131,13 +136,14 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
 RUN apk add --no-cache \
+		libcrypto1.1 \
+		libintl \
+		libssl1.1 \
 		musl \
 		pcre \
-		libssl1.1 \
-		libcrypto1.1 \
-		zlib \
-		libintl \
+		readline \
 		tzdata \
+		zlib \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
 	&& mkdir -p /var/log/nginx \

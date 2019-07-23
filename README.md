@@ -56,6 +56,20 @@ docker run --name some-nginx -d -p 80:80 -e 443 -p 443:443 \
     levonet/nginx
 ```
 
+### njs scripts development
+
+```sh
+docker run -it --rm levonet/nginx njs
+>> var a = {b: []};
+undefined
+>> console.log(a);
+{b:[]}
+undefined
+>> JSON.stringify(a);
+'{"b":[]}'
+>>
+```
+
 ## Image Variants
 
 ### `levonet/nginx:<version>-alpine`

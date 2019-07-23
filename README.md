@@ -1,16 +1,14 @@
 # Supported tags and respective `Dockerfile` links
 
-[![](https://images.microbadger.com/badges/image/levonet/nginx.svg)](https://microbadger.com/images/levonet/nginx "Get your own image badge on microbadger.com")
-[![Docker Pulls](https://img.shields.io/docker/pulls/levonet/nginx.svg)](https://hub.docker.com/r/levonet/nginx/)
-
-
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.17.1-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.0/Dockerfile) Mainline version
+- [`1.17.2-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.2/Dockerfile) Mainline version
 - [`1.16.0-alpine`, `1.16-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.16.0/Dockerfile) Stable version
 - [`1.15.12-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.12/Dockerfile) Legacy version
 - [`1.14.2-alpine`, `1.14-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.14.2/Dockerfile) Legacy version
 
 # NGINX build with load balancer modules
+[![](https://images.microbadger.com/badges/image/levonet/nginx.svg)](https://microbadger.com/images/levonet/nginx "Get your own image badge on microbadger.com")
+[![Docker Pulls](https://img.shields.io/docker/pulls/levonet/nginx.svg)](https://hub.docker.com/r/levonet/nginx/)
 
 **Fastest** and **smaller** Nginx built for x86-64 CPU architecture.
 Nginx binaries are compiled to leverage SSE 4.2 instruction set.

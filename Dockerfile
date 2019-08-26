@@ -43,9 +43,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
 	# Sticky
-	&& mkdir -p /usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
-	&& curl -fSL https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz -o nginx-sticky-module-ng.tar.gz \
-	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng -f nginx-sticky-module-ng.tar.gz --strip 1 \
+	&& git clone https://github.com/levonet/nginx-sticky-module-ng.git --depth=1 \
 	\
 	# Upstream health check
 	&& git clone https://github.com/2Fast2BCn/nginx_upstream_check_module.git --depth=1 \
@@ -103,9 +101,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--with-threads \
-			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \

@@ -42,6 +42,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm nginx.tar.gz \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
+	# An Nginx module for bringing the power of "echo", "sleep", "time" and more to Nginx's config file
+	&& git clone https://github.com/openresty/echo-nginx-module.git --depth=1 \
+	\
 	# Sticky
 	&& git clone https://github.com/levonet/nginx-sticky-module-ng.git --depth=1 \
 	\
@@ -103,6 +106,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--with-threads \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/echo-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \

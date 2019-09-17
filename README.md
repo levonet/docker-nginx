@@ -16,6 +16,7 @@ Nginx binaries are compiled to leverage SSE 4.2 instruction set.
 The difference from the [official Nginx docker image](https://hub.docker.com/_/nginx):
 
 - x86-64 CPU architecture only
+- with [Echo](https://github.com/openresty/echo-nginx-module) dynamic module
 - with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module
 - with [Upstream health check](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme) module
 - with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module

@@ -67,7 +67,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	\
 	# njs scripting language
 	&& git clone -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git --depth=1 \
-	&& (cd njs; CFLAGS="-Ofast -m64 -march=x86-64 -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer" ./configure; make njs) \
+	&& (cd njs; CFLAGS="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer" ./configure; make njs; make test) \
 	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
 		./configure \

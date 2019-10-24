@@ -1,4 +1,4 @@
-FROM alpine:edge AS build
+FROM alpine:3.10 AS build
 
 ENV NGINX_VERSION 1.17.4
 ENV REDIS_MODULE_VERSION 0.3.9
@@ -8,7 +8,7 @@ COPY *.patch /tmp/
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-	&& apk add --no-cache --repository "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
+	&& apk add --no-cache \
 		curl \
 		gcc \
 		gettext \
@@ -125,7 +125,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& strip /usr/sbin/nginx \
 	&& strip /usr/lib/nginx/modules/*.so
 
-FROM alpine:edge
+FROM alpine:3.10
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx

@@ -16,13 +16,16 @@ Nginx binaries are compiled to leverage SSE 4.2 instruction set.
 The difference from the [official Nginx docker image](https://hub.docker.com/_/nginx):
 
 - x86-64 CPU architecture only
-- with [Echo](https://github.com/openresty/echo-nginx-module) dynamic module
+- with [njs scripting language](http://nginx.org/en/docs/njs/) dynamic module
 - with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module
 - with [Upstream health check](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme) module
 - with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module
+- with [SRCache](https://github.com/openresty/srcache-nginx-module) dynamic module
+- with [Memc](https://github.com/openresty/memc-nginx-module) dynamic module
 - with [Redis](https://www.nginx.com/resources/wiki/modules/redis/) dynamic module
+- with [Redis2](https://github.com/openresty/redis2-nginx-module) dynamic module
+- with [Echo](https://github.com/openresty/echo-nginx-module) dynamic module
 - with [A forward proxy](https://github.com/chobits/ngx_http_proxy_connect_module) module
-- with [njs scripting language](http://nginx.org/en/docs/njs/) dynamic module
 - with degradation module
 - using `/etc/nginx/sites-enabled/` for virtual host configuration (like Ubuntu)
 - without modules: http_xslt, http_image_filter, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, mail, mail_ssl, http_geoip, stream_geoip
@@ -55,6 +58,20 @@ docker run --name some-nginx -d -p 80:80 -e 443 -p 443:443 \
     -v /etc/nginx/sites-enabled:/etc/nginx/sites-enabled \
     -v /var/log/nginx:/var/log/nginx \
     levonet/nginx
+```
+
+### Modules
+
+List dynamic modules in container:
+
+```sh
+docker run -t --rm levonet/nginx ls /usr/lib/nginx/modules
+```
+
+Example of loading a module in `nginx.conf`:
+
+```
+load_module modules/ngx_http_js_module.so;
 ```
 
 ### njs scripts development

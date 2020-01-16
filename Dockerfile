@@ -2,7 +2,11 @@ FROM alpine:3.10 AS build
 
 ENV NGINX_VERSION 1.17.7
 ENV NJS_MODULE_VERSION 0.3.7
+ENV ECHO_MODULE_VERSION v0.62rc1
+ENV MEMC_MODULE_VERSION v0.19
+ENV REDIS2_MODULE_VERSION v0.15
 ENV REDIS_MODULE_VERSION 0.3.9
+ENV SRCACHE_MODULE_VERSION v0.32rc1
 
 COPY *.patch /tmp/
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
@@ -42,18 +46,27 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm nginx.tar.gz \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
+	# Transparent subrequest-based caching layout for arbitrary nginx locations
+    && git clone --depth=1 --single-branch -b ${SRCACHE_MODULE_VERSION} https://github.com/openresty/srcache-nginx-module.git \
+	\
+	# Nginx upstream module for the Redis 2.0 protocol
+    && git clone --depth=1 --single-branch -b ${REDIS2_MODULE_VERSION} https://github.com/openresty/redis2-nginx-module.git \
+	\
+	# An extended version of the standard memcached module
+    && git clone --depth=1 --single-branch -b ${MEMC_MODULE_VERSION} https://github.com/openresty/memc-nginx-module.git \
+	\
 	# An Nginx module for bringing the power of "echo", "sleep", "time" and more to Nginx's config file
-	&& git clone https://github.com/openresty/echo-nginx-module.git --depth=1 \
+	&& git clone --depth=1 --single-branch -b ${ECHO_MODULE_VERSION} https://github.com/openresty/echo-nginx-module.git \
 	\
 	# Sticky
-	&& git clone https://github.com/levonet/nginx-sticky-module-ng.git --depth=1 \
+	&& git clone --depth=1 https://github.com/levonet/nginx-sticky-module-ng.git \
 	\
 	# Upstream health check
-	&& git clone https://github.com/2Fast2BCn/nginx_upstream_check_module.git --depth=1 \
+	&& git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
 	&& patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.14.0+.patch \
 	\
 	# Brotli
-	&& git clone https://github.com/google/ngx_brotli.git --depth=1 \
+	&& git clone --depth=1 https://github.com/google/ngx_brotli.git \
 	&& (cd ngx_brotli; git submodule update --init) \
 	\
 	# Redis
@@ -62,11 +75,11 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
 	\
 	# A forward proxy module for CONNECT request handling
-	&& git clone https://github.com/chobits/ngx_http_proxy_connect_module.git --depth=1 \
+	&& git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
 	&& patch -p1 < /tmp/proxy_connect_rewrite_10158.patch \
 	\
 	# njs scripting language
-	&& git clone -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git --depth=1 \
+	&& git clone --depth=1 --single-branch -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git \
 	&& (cd njs; CFLAGS="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer" ./configure; make njs; make test) \
 	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
@@ -107,10 +120,13 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/echo-nginx-module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/memc-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/redis2-nginx-module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/srcache-nginx-module \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& rm -rf /etc/nginx/html/ \

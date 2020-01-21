@@ -1,7 +1,7 @@
 FROM alpine:3.10 AS build
 
-ENV NGINX_VERSION 1.17.7
-ENV NJS_MODULE_VERSION 0.3.7
+ENV NGINX_VERSION 1.17.8
+ENV NJS_MODULE_VERSION 0.3.8
 ENV ECHO_MODULE_VERSION v0.62rc1
 ENV MEMC_MODULE_VERSION v0.19
 ENV REDIS2_MODULE_VERSION v0.15
@@ -47,13 +47,13 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
 	# Transparent subrequest-based caching layout for arbitrary nginx locations
-    && git clone --depth=1 --single-branch -b ${SRCACHE_MODULE_VERSION} https://github.com/openresty/srcache-nginx-module.git \
+	&& git clone --depth=1 --single-branch -b ${SRCACHE_MODULE_VERSION} https://github.com/openresty/srcache-nginx-module.git \
 	\
 	# Nginx upstream module for the Redis 2.0 protocol
-    && git clone --depth=1 --single-branch -b ${REDIS2_MODULE_VERSION} https://github.com/openresty/redis2-nginx-module.git \
+	&& git clone --depth=1 --single-branch -b ${REDIS2_MODULE_VERSION} https://github.com/openresty/redis2-nginx-module.git \
 	\
 	# An extended version of the standard memcached module
-    && git clone --depth=1 --single-branch -b ${MEMC_MODULE_VERSION} https://github.com/openresty/memc-nginx-module.git \
+	&& git clone --depth=1 --single-branch -b ${MEMC_MODULE_VERSION} https://github.com/openresty/memc-nginx-module.git \
 	\
 	# An Nginx module for bringing the power of "echo", "sleep", "time" and more to Nginx's config file
 	&& git clone --depth=1 --single-branch -b ${ECHO_MODULE_VERSION} https://github.com/openresty/echo-nginx-module.git \

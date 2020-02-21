@@ -1,0 +1,123 @@
+# HG changeset patch
+# User Dmitry Volyntsev <xeioex@nginx.com>
+# Date 1582123178 -10800
+#      Wed Feb 19 17:39:38 2020 +0300
+# Node ID 32eef1e5584aab69a547771cd407c1584941b979
+# Parent  0173143d7b15e751db02e9f734900749546d7b16
+HTTP: introduced background subrequest mode in r.subrequest().
+
+If "options.background" boolean flag is true the created subrequest is
+background subrequest. Responses to background subrequest are ignored.
+Unlike ordinary subrequests, a background subrequest can be created
+inside a variable handler. The background flag and callback argument are
+mutually exclusive.
+
+diff --git a/nginx/ngx_http_js_module.c b/nginx/ngx_http_js_module.c
+--- a/nginx/ngx_http_js_module.c
++++ b/nginx/ngx_http_js_module.c
+@@ -1784,6 +1784,7 @@ static njs_int_t
+ ngx_http_js_ext_subrequest(njs_vm_t *vm, njs_value_t *args, njs_uint_t nargs,
+     njs_index_t unused)
+ {
++    unsigned                  background;
+     ngx_int_t                 rc, promise;
+     njs_str_t                 uri_arg, args_arg, method_name, body_arg;
+     ngx_uint_t                method, methods_max, has_body;
+@@ -1817,6 +1818,7 @@ ngx_http_js_ext_subrequest(njs_vm_t *vm,
+     static const njs_str_t args_key   = njs_str("args");
+     static const njs_str_t method_key = njs_str("method");
+     static const njs_str_t body_key = njs_str("body");
++    static const njs_str_t background_key = njs_str("background");
+ 
+     r = njs_vm_external(vm, njs_arg(args, nargs, 0));
+     if (njs_slow_path(r == NULL)) {
+@@ -1852,6 +1854,7 @@ ngx_http_js_ext_subrequest(njs_vm_t *vm,
+     args_arg.start = NULL;
+     has_body = 0;
+     promise = 0;
++    background = 0;
+ 
+     arg = njs_arg(args, nargs, 2);
+ 
+@@ -1881,6 +1884,11 @@ ngx_http_js_ext_subrequest(njs_vm_t *vm,
+             }
+         }
+ 
++        value = njs_vm_object_prop(vm, options, &background_key);
++        if (value != NULL) {
++            background = njs_value_bool(value);
++        }
++
+         value = njs_vm_object_prop(vm, options, &method_key);
+         if (value != NULL) {
+             if (ngx_http_js_string(vm, value, &method_name) != NJS_OK) {
+@@ -1924,7 +1932,12 @@ ngx_http_js_ext_subrequest(njs_vm_t *vm,
+         }
+     }
+ 
+-    if (callback == NULL) {
++    if (background && callback != NULL) {
++        njs_vm_error(vm, "background flag and callback are mutually exclusive");
++        return NJS_ERROR;
++    }
++
++    if (!background && callback == NULL) {
+         callback = njs_vm_function_alloc(vm, ngx_http_js_promise_trampoline);
+         if (callback == NULL) {
+             goto memory_error;
+@@ -1948,7 +1961,7 @@ ngx_http_js_ext_subrequest(njs_vm_t *vm,
+         sr->method_name.data = method_name.start;
+     }
+ 
+-    sr->header_only = (sr->method == NGX_HTTP_HEAD);
++    sr->header_only = (sr->method == NGX_HTTP_HEAD) || (callback == NULL);
+ 
+     if (has_body) {
+         rb = ngx_pcalloc(r->pool, sizeof(ngx_http_request_body_t));
+@@ -2015,23 +2028,31 @@ ngx_http_js_subrequest(ngx_http_request_
+ 
+     ctx = ngx_http_get_module_ctx(r, ngx_http_js_module);
+ 
+-    flags = NGX_HTTP_SUBREQUEST_BACKGROUND | NGX_HTTP_SUBREQUEST_IN_MEMORY;
+-
+-    ps = ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
+-    if (ps == NULL) {
+-        njs_vm_error(ctx->vm, "internal error");
+-        return NJS_ERROR;
++    flags = NGX_HTTP_SUBREQUEST_BACKGROUND;
++
++    if (callback != NULL) {
++        ps = ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
++        if (ps == NULL) {
++            njs_vm_error(ctx->vm, "internal error");
++            return NJS_ERROR;
++        }
++
++        vm_event = njs_vm_add_event(ctx->vm, callback, 1, NULL, NULL);
++        if (vm_event == NULL) {
++            njs_vm_error(ctx->vm, "internal error");
++            return NJS_ERROR;
++        }
++
++        ps->handler = ngx_http_js_subrequest_done;
++        ps->data = vm_event;
++
++        flags |= NGX_HTTP_SUBREQUEST_IN_MEMORY;
++
++    } else {
++        ps = NULL;
++        vm_event = NULL;
+     }
+ 
+-    vm_event = njs_vm_add_event(ctx->vm, callback, 1, NULL, NULL);
+-    if (vm_event == NULL) {
+-        njs_vm_error(ctx->vm, "internal error");
+-        return NJS_ERROR;
+-    }
+-
+-    ps->handler = ngx_http_js_subrequest_done;
+-    ps->data = vm_event;
+-
+     uri.len = uri_arg->length;
+     uri.data = uri_arg->start;
+ 

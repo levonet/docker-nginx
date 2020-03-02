@@ -1,0 +1,43 @@
+# HG changeset patch
+# User Dmitry Volyntsev <xeioex@nginx.com>
+# Date 1582896462 -10800
+#      Fri Feb 28 16:27:42 2020 +0300
+# Node ID 8462b3e20a8042bbcbf33167fef5f3d53f8d30d2
+# Parent  2e3bfd696ecb822c82605681554381e9eabd032d
+Fixed background subrequest finalization.
+
+diff --git a/src/http/ngx_http_request.c b/src/http/ngx_http_request.c
+--- a/src/http/ngx_http_request.c
++++ b/src/http/ngx_http_request.c
+@@ -2490,6 +2490,15 @@ ngx_http_finalize_request(ngx_http_reque
+     if (r != r->main) {
+         clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
+ 
++        if (r->buffered || r->postponed) {
++
++            if (ngx_http_set_write_handler(r) != NGX_OK) {
++                ngx_http_terminate_request(r, 0);
++            }
++
++            return;
++        }
++
+         if (r->background) {
+             if (!r->logged) {
+                 if (clcf->log_subrequest) {
+@@ -2509,15 +2518,6 @@ ngx_http_finalize_request(ngx_http_reque
+             return;
+         }
+ 
+-        if (r->buffered || r->postponed) {
+-
+-            if (ngx_http_set_write_handler(r) != NGX_OK) {
+-                ngx_http_terminate_request(r, 0);
+-            }
+-
+-            return;
+-        }
+-
+         pr = r->parent;
+ 
+         if (r == c->data) {

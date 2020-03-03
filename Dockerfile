@@ -1,7 +1,7 @@
 FROM alpine:3.10 AS build
 
-ENV NGINX_VERSION 1.17.8
-ENV NJS_MODULE_VERSION 0.3.8
+ENV NGINX_VERSION 1.17.9
+ENV NJS_MODULE_VERSION 0.3.9
 ENV ECHO_MODULE_VERSION v0.62rc1
 ENV MEMC_MODULE_VERSION v0.19
 ENV REDIS2_MODULE_VERSION v0.15
@@ -80,8 +80,6 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	\
 	# njs scripting language
 	&& git clone --depth=1 --single-branch -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git \
-	&& (cd njs; patch -p1 < /tmp/nginx_background_subrequest.patch) \
-	&& patch -p1 < /tmp/nginx_background_subrequest_finalization.patch \
 	&& (cd njs; CFLAGS="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer" ./configure; make njs; make test) \
 	\
 	&& CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \

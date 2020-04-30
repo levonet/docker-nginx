@@ -141,7 +141,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& strip /usr/sbin/nginx \
 	&& strip /usr/lib/nginx/modules/*.so
 
-FROM alpine:3.10
+FROM alpine:3.11
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx

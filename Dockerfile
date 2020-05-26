@@ -74,7 +74,11 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	\
 	# Upstream health check
 	&& git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
-	&& patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.14.0+.patch \
+    && (cd nginx_upstream_check_module; \
+        patch -p1 < /tmp/nginx_upstream_check_module-only-worker-proccess.patch; \
+        patch -p1 < /tmp/nginx_upstream_check_module-check_1.16.1+.patch \
+    ) \
+    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.16.1+.patch \
 	\
 	# Brotli
 	&& git clone --depth=1 https://github.com/google/ngx_brotli.git \

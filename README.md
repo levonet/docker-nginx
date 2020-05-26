@@ -23,8 +23,10 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module
 - with [SRCache](https://github.com/openresty/srcache-nginx-module) dynamic module
 - with [Memc](https://github.com/openresty/memc-nginx-module) dynamic module
+- with [PostgreSQL](https://github.com/openresty/ngx_postgres) dynamic module
 - with [Redis](https://www.nginx.com/resources/wiki/modules/redis/) dynamic module
 - with [Redis2](https://github.com/openresty/redis2-nginx-module) dynamic module
+- with [Resty DBD Streams to JSON](https://github.com/openresty/rds-json-nginx-module) dynamic module
 - with [Echo](https://github.com/openresty/echo-nginx-module) dynamic module
 - with [A forward proxy](https://github.com/chobits/ngx_http_proxy_connect_module) module
 - with degradation module

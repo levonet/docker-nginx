@@ -1,11 +1,15 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
+- [`1.19.0-alpine`, `1.19-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.19.0/Dockerfile) Mainline version
 - [`1.18.0-alpine`, `1.18-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.18.0/Dockerfile) Stable version
-- [`1.17.10-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.10/Dockerfile) Mainline version
-- [`1.16.0-alpine`, `1.16-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.16.0/Dockerfile) Stable version
-- [`1.15.12-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.12/Dockerfile) Legacy version
-- [`1.14.2-alpine`, `1.14-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.14.2/Dockerfile) Legacy version
+- <details><summary>Older versions</summary>
+
+  - [`1.17.10-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.10/Dockerfile)
+  - [`1.16.0-alpine`, `1.16-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.16.0/Dockerfile)
+  - [`1.15.12-alpine`, `1.15-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.15.12/Dockerfile)
+  - [`1.14.2-alpine`, `1.14-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.14.2/Dockerfile)
+</details>
 
 # NGINX build with load balancer modules
 [![](https://images.microbadger.com/badges/image/levonet/nginx.svg)](https://microbadger.com/images/levonet/nginx "Get your own image badge on microbadger.com")

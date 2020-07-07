@@ -1,17 +1,35 @@
-FROM alpine:3.11 AS build
+FROM alpine:3.12 AS build
 
 ENV NGINX_VERSION 1.19.0
-ENV NJS_MODULE_VERSION 0.4.1
-ENV ECHO_MODULE_VERSION v0.62rc1
+# https://github.com/nginx/njs
+ENV NJS_MODULE_VERSION 0.4.2
+# https://github.com/openresty/echo-nginx-module
+ENV ECHO_MODULE_VERSION v0.62
+# https://github.com/openresty/headers-more-nginx-module
+ENV HEADERS_MORE_MODULE_VERSION v0.33
+# https://github.com/openresty/memc-nginx-module
 ENV MEMC_MODULE_VERSION v0.19
+# https://github.com/vision5/ngx_devel_kit
+ENV NDK_MODULE_VERSION v0.3.1
+# https://github.com/openresty/ngx_postgres
 ENV POSTGRES_MODULE_VERSION master
+# https://github.com/openresty/rds-json-nginx-module
 ENV RDSJSON_MODULE_VERSION v0.15
+# https://github.com/openresty/redis2-nginx-module
 ENV REDIS2_MODULE_VERSION v0.15
 ENV REDIS_MODULE_VERSION 0.3.9
-ENV SRCACHE_MODULE_VERSION v0.32rc1
+# https://github.com/openresty/set-misc-nginx-module
+ENV SET_MISC_MODULE_VERSION v0.32
+# https://github.com/openresty/srcache-nginx-module
+ENV SRCACHE_MODULE_VERSION v0.32
+# https://github.com/weibocom/nginx-upsync-module
+ENV UPSYNC_MODULE_VERSION v2.1.2
+# https://github.com/xiaokai-wang/nginx-stream-upsync-module
+ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 
 COPY *.patch /tmp/
-RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
+RUN set -eux \
+	&& export GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
 	&& apk add --no-cache \
@@ -24,6 +42,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		linux-headers \
 		make \
 		openssl-dev \
+		patch \
 		pcre-dev \
 		postgresql-dev \
 		readline-dev \
@@ -132,18 +151,19 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 			--with-stream_ssl_module \
 			--with-stream_ssl_preread_module \
 			--with-threads \
-			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
-			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/echo-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/memc-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_dyups_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_postgres \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/rds-json-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/redis2-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/srcache-nginx-module \
+			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
+			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
 	&& rm -rf /etc/nginx/html/ \
@@ -158,7 +178,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& strip /usr/sbin/nginx \
 	&& strip /usr/lib/nginx/modules/*.so
 
-FROM alpine:3.11
+FROM alpine:3.12
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx

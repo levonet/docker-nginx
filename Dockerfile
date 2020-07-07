@@ -30,8 +30,8 @@ ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 COPY *.patch /tmp/
 RUN set -eux \
 	&& export GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
-	&& addgroup -S nginx \
-	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+    && addgroup -S -g 101 nginx \
+    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
 	&& apk add --no-cache \
 		curl \
 		gcc \

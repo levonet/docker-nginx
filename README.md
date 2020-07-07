@@ -23,8 +23,12 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - x86-64 CPU architecture only
 - with [njs scripting language](http://nginx.org/en/docs/njs/) dynamic module
 - with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module
+- with [Sync upstreams](https://github.com/weibocom/nginx-upsync-module#readme) dynamic module
+- with [Stream sync upstreams](https://github.com/xiaokai-wang/nginx-stream-upsync-module#readme) dynamic module
 - with [Upstream health check](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme) module
 - with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module
+- with [Various set_xxx directives](https://github.com/openresty/set-misc-nginx-module#readme) dynamic module
+- with [Headers more](https://github.com/openresty/headers-more-nginx-module#readme) dynamic module
 - with [SRCache](https://github.com/openresty/srcache-nginx-module) dynamic module
 - with [Memc](https://github.com/openresty/memc-nginx-module) dynamic module
 - with [PostgreSQL](https://github.com/openresty/ngx_postgres) dynamic module

@@ -30,8 +30,8 @@ ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 COPY *.patch /tmp/
 RUN set -eux \
 	&& export GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
-    && addgroup -S -g 101 nginx \
-    && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
+	&& addgroup -S -g 101 nginx \
+	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
 	&& apk add --no-cache \
 		curl \
 		gcc \
@@ -68,6 +68,9 @@ RUN set -eux \
 	&& rm nginx.tar.gz \
 	&& cd /usr/src/nginx-${NGINX_VERSION} \
 	\
+	# Nginx Development Kit
+	&& git clone --depth=1 --single-branch -b ${NDK_MODULE_VERSION} https://github.com/vision5/ngx_devel_kit.git \
+	\
 	# Transparent subrequest-based caching layout for arbitrary nginx locations
 	&& git clone --depth=1 --single-branch -b ${SRCACHE_MODULE_VERSION} https://github.com/openresty/srcache-nginx-module.git \
 	\
@@ -88,16 +91,22 @@ RUN set -eux \
 	# An Nginx module for bringing the power of "echo", "sleep", "time" and more to Nginx's config file
 	&& git clone --depth=1 --single-branch -b ${ECHO_MODULE_VERSION} https://github.com/openresty/echo-nginx-module.git \
 	\
+	# Set and clear input and output headers
+	&& git clone --depth=1 --single-branch -b ${HEADERS_MORE_MODULE_VERSION} https://github.com/openresty/headers-more-nginx-module.git \
+	\
+	# Various set_xxx directives added to nginx's rewrite module
+	&& git clone --depth=1 --single-branch -b ${SET_MISC_MODULE_VERSION} https://github.com/openresty/set-misc-nginx-module.git \
+	\
 	# Sticky
 	&& git clone --depth=1 https://github.com/levonet/nginx-sticky-module-ng.git \
 	\
 	# Upstream health check
 	&& git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
-    && (cd nginx_upstream_check_module; \
-        patch -p1 < /tmp/nginx_upstream_check_module-only-worker-proccess.patch; \
-        patch -p1 < /tmp/nginx_upstream_check_module-check_1.16.1+.patch \
-    ) \
-    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.16.1+.patch \
+	&& (cd nginx_upstream_check_module; \
+		patch -p1 < /tmp/nginx_upstream_check_module-only-worker-proccess.patch; \
+		patch -p1 < /tmp/nginx_upstream_check_module-check_1.16.1+.patch \
+	) \
+	&& patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.16.1+.patch \
 	\
 	# Brotli
 	&& git clone --depth=1 https://github.com/google/ngx_brotli.git \
@@ -111,6 +120,12 @@ RUN set -eux \
 	# A forward proxy module for CONNECT request handling
 	&& git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
 	&& patch -p1 < /tmp/proxy_connect_rewrite_10158.patch \
+	\
+	# Sync upstreams from consul or others
+	&& git clone --depth=1 --single-branch -b ${UPSYNC_MODULE_VERSION} https://github.com/weibocom/nginx-upsync-module.git \
+	\
+	# Stream sync upstreams from consul or others
+	&& git clone --depth=1 --single-branch -b ${UPSYNC_STREAM_MODULE_VERSION} https://github.com/xiaokai-wang/nginx-stream-upsync-module.git \
 	\
 	# njs scripting language
 	&& git clone --depth=1 --single-branch -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git \
@@ -152,15 +167,20 @@ RUN set -eux \
 			--with-stream_ssl_preread_module \
 			--with-threads \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/echo-nginx-module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/headers-more-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/memc-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-stream-upsync-module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-upsync-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_devel_kit \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_dyups_module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_postgres \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/rds-json-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/redis2-nginx-module \
+			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/set-misc-nginx-module \
 			--add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/srcache-nginx-module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module \
 			--add-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_proxy_connect_module \

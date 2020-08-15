@@ -1,8 +1,8 @@
 FROM alpine:3.12 AS build
 
-ENV NGINX_VERSION 1.19.1
+ENV NGINX_VERSION 1.19.2
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.4.2
+ENV NJS_MODULE_VERSION 0.4.3
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -119,7 +119,7 @@ RUN set -eux \
     \
     # A forward proxy module for CONNECT request handling
     && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
-    && patch -p1 < /tmp/proxy_connect_rewrite_10158.patch \
+    && patch -p1 < ngx_http_proxy_connect_module/patch/proxy_connect_rewrite_1018.patch \
     \
     # Sync upstreams from consul or others
     && git clone --depth=1 --single-branch -b ${UPSYNC_MODULE_VERSION} https://github.com/weibocom/nginx-upsync-module.git \

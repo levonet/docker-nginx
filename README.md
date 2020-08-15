@@ -1,7 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.19.1-alpine`, `1.19-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.19.1/Dockerfile) Mainline version
+- [`1.19.2-alpine`, `1.19-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.19.2/Dockerfile) Mainline version
 - [`1.18.0-alpine`, `1.18-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.18.0/Dockerfile) Stable version
 - <details><summary>Older versions</summary>
 

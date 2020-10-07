@@ -26,6 +26,12 @@ ENV SRCACHE_MODULE_VERSION v0.32
 ENV UPSYNC_MODULE_VERSION v2.1.2
 # https://github.com/xiaokai-wang/nginx-stream-upsync-module
 ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
+# https://github.com/jaegertracing/jaeger-client-cpp
+ENV JAEGER_CLIENT_VERSION v0.6.0
+# https://github.com/opentracing-contrib/nginx-opentracing
+ENV OPENTRACING_LIB_VERSION v1.6.0
+# https://github.com/opentracing/opentracing-cpp
+ENV OPENTRACING_MODULE_VERSION v0.10.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -33,7 +39,9 @@ RUN set -eux \
     && addgroup -S -g 101 nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
     && apk add --no-cache \
+        cmake \
         curl \
+        g++ \
         gcc \
         gettext \
         git \
@@ -67,6 +75,38 @@ RUN set -eux \
     && tar -zxC /usr/src -f nginx.tar.gz \
     && rm nginx.tar.gz \
     && cd /usr/src/nginx-${NGINX_VERSION} \
+    \
+    # Jaeger
+    && git clone --depth=1 --single-branch -b ${OPENTRACING_LIB_VERSION} https://github.com/opentracing/opentracing-cpp.git \
+    && mkdir opentracing-cpp/.build \
+    && (cd opentracing-cpp/.build; \
+        cmake \
+            -DBUILD_MOCKTRACER=OFF \
+            -DBUILD_STATIC_LIBS=OFF \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..; \
+        make; \
+        make install \
+    ) \
+    && git clone --depth=1 --single-branch -b ${JAEGER_CLIENT_VERSION} https://github.com/jaegertracing/jaeger-client-cpp.git \
+    && mkdir jaeger-client-cpp/.build \
+    && (cd jaeger-client-cpp/.build; \
+        cmake \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHUNTER_CONFIGURATION_TYPES=Release \
+            -DJAEGERTRACING_BUILD_EXAMPLES=OFF \
+            -DJAEGERTRACING_COVERAGE=OFF \
+            -DJAEGERTRACING_WARNINGS_AS_ERRORS=OFF \
+            -DJAEGERTRACING_WITH_YAML_CPP=ON \
+            ..; \
+        make; \
+        make test; \
+        make install \
+    ) \
+    && export HUNTER_INSTALL_DIR=$(cat jaeger-client-cpp/.build/_3rdParty/Hunter/install-root-dir) \
+    && git clone --depth=1 --single-branch -b ${OPENTRACING_MODULE_VERSION} https://github.com/opentracing-contrib/nginx-opentracing.git \
     \
     # Nginx Development Kit
     && git clone --depth=1 --single-branch -b ${NDK_MODULE_VERSION} https://github.com/vision5/ngx_devel_kit.git \
@@ -166,9 +206,12 @@ RUN set -eux \
             --with-stream_ssl_module \
             --with-stream_ssl_preread_module \
             --with-threads \
+            --with-cc-opt="-I${HUNTER_INSTALL_DIR}/include" \
+            --with-ld-opt="-L${HUNTER_INSTALL_DIR}/lib" \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/echo-nginx-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/headers-more-nginx-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/memc-nginx-module \
+            --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-opentracing/opentracing \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-stream-upsync-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-upsync-module \
@@ -193,9 +236,13 @@ RUN set -eux \
     && install -m644 html/50x.html /usr/share/nginx/html/ \
     && install -m755 njs/build/njs /usr/bin/ \
     && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
+    && cp -p ${HUNTER_INSTALL_DIR}/lib/libyaml-cpp.so* /usr/local/lib/ \
     && strip /usr/bin/njs \
-    && strip /usr/sbin/nginx \
-    && strip /usr/lib/nginx/modules/*.so
+        /usr/sbin/nginx \
+        /usr/lib/nginx/modules/*.so \
+        /usr/local/lib/libopentracing.so* \
+        /usr/local/lib/libyaml-cpp.so* \
+        /usr/local/lib64/libjaegertracing.so*
 
 FROM alpine:3.12
 
@@ -205,6 +252,9 @@ COPY --from=build /usr/bin/njs /usr/bin/njs
 COPY --from=build /usr/bin/envsubst /usr/local/bin/envsubst
 COPY --from=build /usr/lib/nginx/ /usr/lib/nginx/
 COPY --from=build /usr/share/nginx /usr/share/nginx
+COPY --from=build /usr/local/lib/libopentracing.so* /usr/local/lib/
+COPY --from=build /usr/local/lib/libyaml-cpp.so* /usr/local/lib/
+COPY --from=build /usr/local/lib64/libjaegertracing.so* /usr/local/lib64/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
@@ -214,6 +264,7 @@ RUN apk add --no-cache \
         libintl \
         libpq \
         libssl1.1 \
+        libstdc++ \
         musl \
         pcre \
         readline \
@@ -222,6 +273,7 @@ RUN apk add --no-cache \
     && addgroup -S -g 101 nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
     && mkdir -p /var/log/nginx \
+    && ln -sf /usr/local/lib64/libjaegertracing.so /usr/local/lib/libjaegertracing_plugin.so \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 

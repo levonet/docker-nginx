@@ -37,6 +37,8 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - with [Resty DBD Streams to JSON](https://github.com/openresty/rds-json-nginx-module) dynamic module
 - with [Echo](https://github.com/openresty/echo-nginx-module) dynamic module
 - with [A forward proxy](https://github.com/chobits/ngx_http_proxy_connect_module) module
+- with [Opentracing](https://github.com/opentracing-contrib/nginx-opentracing) dynamic module
+  and [Jaeger](https://github.com/jaegertracing/jaeger-client-cpp) plugin
 - with degradation module
 - using `/etc/nginx/sites-enabled/` for virtual host configuration (like Ubuntu)
 - without modules: http_xslt, http_image_filter, http_sub, http_dav, http_flv, http_mp4, http_random_index, http_slice, mail, mail_ssl, http_geoip, stream_geoip

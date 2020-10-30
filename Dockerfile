@@ -1,6 +1,6 @@
 FROM alpine:3.12 AS build
 
-ENV NGINX_VERSION 1.19.3
+ENV NGINX_VERSION 1.19.4
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.4.4
 # https://github.com/openresty/echo-nginx-module
@@ -28,9 +28,9 @@ ENV UPSYNC_MODULE_VERSION v2.1.2
 ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 # https://github.com/jaegertracing/jaeger-client-cpp
 ENV JAEGER_CLIENT_VERSION v0.6.0
-# https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing/opentracing-cpp
+ENV OPENTRACING_LIB_VERSION v1.6.0
+# https://github.com/opentracing-contrib/nginx-opentracing
 ENV OPENTRACING_MODULE_VERSION v0.10.0
 
 COPY *.patch /tmp/

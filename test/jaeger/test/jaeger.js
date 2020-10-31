@@ -2,8 +2,8 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const should = chai.should()
 
-const NGINX_URL = process.env.NGINX_URL || "http://localhost:8000"
-const JAEGER_URL = process.env.JAEGER_URL || "http://localhost:16686"
+const NGINX_URL = process.env.NGINX_URL || 'http://localhost:8000'
+const JAEGER_URL = process.env.JAEGER_URL || 'http://localhost:16686'
 
 chai.use(chaiHttp)
 
@@ -35,9 +35,9 @@ describe('jaeger', () => {
 
                         res.should.have.status(200)
                         res.should.be.json
-                        res.body.should.be.an("object")
-                        res.body.should.have.property("data")
-                        res.body.data.should.be.an("array")
+                        res.body.should.be.an('object')
+                        res.body.should.have.property('data')
+                        res.body.data.should.be.an('array')
                             .that.is.not.empty
                         done()
                     })

@@ -1,7 +1,8 @@
-.PHONY: all test
+TESTS = jaeger njs
 
-all: test
+.PHONY: all $(TESTS)
+all: $(TESTS)
 
-test: jaeger
-	cd $^; \
+$(TESTS):
+	cd $@; \
 	docker-compose up --build --abort-on-container-exit

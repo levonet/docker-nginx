@@ -101,6 +101,14 @@ undefined
 >>
 ```
 
+## Test & Examles
+
+Sample configurations and module tests are located in a folder named `test`.
+
+To run tests, go to the folder `test` and run command `make`.
+
+To start a specific example, go to an example folder and run `docker-compose up`.
+
 ## Image Variants
 
 ### `levonet/nginx:<version>-alpine`

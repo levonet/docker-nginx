@@ -18,6 +18,4 @@ jobs:
     - name: Build the Docker image
       env:
         DOCKER_TAG: ${{ github.sha }}
-      run: |
-        env | sort
-        # docker build -t levonet/nginx:${DOCKER_TAG} .
+      run: docker build -t levonet/nginx:${DOCKER_TAG} .

@@ -13,8 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Build the Docker image
+      env:
+        DOCKER_TAG: ${{ env.GITHUB_RUN_ID }}
       run: |
         env | sort
-        # docker build -t levonet/nginx:${GITHUB_ACTION} .
+        # docker build -t levonet/nginx:${GITHUB_RUN_ID} .

@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Build the Docker image
       env:
-        DOCKER_TAG: ${GITHUB_RUN_ID}
+        DOCKER_TAG: ${{ github.sha }}
       run: |
         env | sort
-        # docker build -t levonet/nginx:${GITHUB_RUN_ID} .
+        # docker build -t levonet/nginx:${DOCKER_TAG} .

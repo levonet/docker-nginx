@@ -1,7 +1,11 @@
+DOCKER_TAG ?= latest
 TESTS = jaeger njs
 
-.PHONY: all $(TESTS)
-all: $(TESTS)
+.PHONY: all build $(TESTS)
+all: build $(TESTS)
+
+build:
+	docker build -t levonet/nginx:$(DOCKER_TAG) ..
 
 $(TESTS):
 	cd $@; \

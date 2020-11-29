@@ -7,15 +7,16 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
+    env:
+      DOCKER_TAG: ${{ github.sha }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build the Docker image
-      env:
-        DOCKER_TAG: ${{ github.sha }}
       run: docker build -t levonet/nginx:${DOCKER_TAG} .
+    - name: Run test
+      run: |
+        cd test
+        make

@@ -1,6 +1,6 @@
 FROM alpine:3.12 AS build
 
-ENV NGINX_VERSION 1.19.4
+ENV NGINX_VERSION 1.19.5
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.4.4
 # https://github.com/openresty/echo-nginx-module
@@ -23,7 +23,7 @@ ENV SETMISC_MODULE_VERSION v0.32
 # https://github.com/openresty/srcache-nginx-module
 ENV SRCACHE_MODULE_VERSION v0.32
 # https://github.com/weibocom/nginx-upsync-module
-ENV UPSYNC_MODULE_VERSION v2.1.2
+ENV UPSYNC_MODULE_VERSION v2.1.3
 # https://github.com/xiaokai-wang/nginx-stream-upsync-module
 ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 # https://github.com/jaegertracing/jaeger-client-cpp

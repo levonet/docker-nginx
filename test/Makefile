@@ -1,5 +1,5 @@
 DOCKER_TAG ?= latest
-TESTS = jaeger njs proxy_connect
+TESTS = jaeger njs proxy_connect sticky
 
 .PHONY: all build $(TESTS)
 all: build $(TESTS)

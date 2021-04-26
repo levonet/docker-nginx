@@ -1,0 +1,15 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --timeout 15000 --bail"
+  },
+  "private": true,
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-expected-cookie": "^1.0.2",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.3.2"
+  }
+}

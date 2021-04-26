@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  nginx:
+    image: levonet/nginx:${DOCKER_TAG:-latest}
+    ports:
+    - "8000:8000"
+    volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      nginx:
+        ipv4_address: 172.16.254.10
+  nginx-test:
+    build: .
+    command: /usr/local/bin/dockerize -wait tcp://172.16.254.10:8000 -timeout 10s yarn test
+    environment:
+      NGINX_URL: http://172.16.254.10:8000
+    ports:
+    - "8081:8081"
+    - "8082:8082"
+    networks:
+      nginx:
+        ipv4_address: 172.16.254.20
+    depends_on:
+    - nginx
+
+networks:
+  nginx:
+    ipam:
+      driver: default
+      config:
+      - subnet: "172.16.254.0/24"

@@ -1,6 +1,5 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const chaiExpectedCookie = require('chai-expected-cookie')
 const http = require('http')
 
 const should = chai.should()
@@ -9,7 +8,6 @@ const NGINX_URL = process.env.NGINX_URL || 'http://localhost:8000'
 const SERVERS = 2
 
 chai.use(chaiHttp)
-chai.use(chaiExpectedCookie)
 
 describe('sticky', () => {
     const servers = []
@@ -68,7 +66,7 @@ describe('sticky', () => {
 
                     res.should.have.status(200)
                     res.should.be.json
-                    res.should.to.containCookie({name: 'route'})
+                    res.should.to.have.cookie('route')
                     res.body.should.be.an('object')
                     res.body.should.have.property('port')
                     res.body.port.should.be.an('number')
@@ -92,7 +90,7 @@ describe('sticky', () => {
                                 res.should.have.status(200)
                                 res.body.port.should.be.an('number')
                                     .that.is.equal(upstreamPort)
-                                res.should.to.containCookie({name: 'route'})
+                                res.should.to.have.cookie('route')
                             }
                             done()
                         })
@@ -112,7 +110,7 @@ describe('sticky', () => {
                 }
 
                 res.should.have.status(200)
-                res.should.to.containCookie({name: 'route'})
+                res.should.to.have.cookie('route')
 
                 done()
             })
@@ -130,7 +128,7 @@ describe('sticky', () => {
 
                     res.should.have.status(200)
                     res.should.be.json
-                    res.should.to.containCookie({name: 'JSESSIONID'})
+                    res.should.to.have.cookie('JSESSIONID')
                     res.body.should.be.an('object')
                     res.body.should.have.property('port')
                     res.body.port.should.be.an('number')
@@ -161,7 +159,7 @@ describe('sticky', () => {
 
                         res.should.have.status(200)
                         res.should.be.json
-                        res.should.to.containCookie({name: 'JSESSIONID'})
+                        res.should.to.have.cookie('JSESSIONID')
                         res.body.should.be.an('object')
                         res.body.should.have.property('port')
                         res.body.port.should.be.an('number')

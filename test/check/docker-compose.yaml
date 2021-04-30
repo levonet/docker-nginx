@@ -10,7 +10,7 @@ services:
     networks:
       nginx:
         ipv4_address: 172.16.252.10
-  nginx-test:
+  test:
     build: .
     command: /usr/local/bin/dockerize -wait tcp://172.16.252.10:8000 -timeout 10s yarn test
     environment:

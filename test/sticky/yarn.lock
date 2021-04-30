@@ -118,11 +118,6 @@ camelcase@^6.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.2.0.tgz#924af881c9d525ac9d87f40d964e5cea982a1809"
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
-chai-expected-cookie@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/chai-expected-cookie/-/chai-expected-cookie-1.0.2.tgz#dd40b6d2b85992f8065cf13beea16dac1a763766"
-  integrity sha512-PUfGcPOMckOxELNxCy0Z48fIQ9Tdz9sCssMy/ftvZUnMIc4F52F1XsPDTGddqg52HUlzUp3B3SsyMG8NN74SCQ==
-
 chai-http@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/chai-http/-/chai-http-4.3.0.tgz#3c37c675c1f4fe685185a307e345de7599337c1a"

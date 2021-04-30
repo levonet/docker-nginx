@@ -1,13 +1,13 @@
-name: Docker Image CI
+name: build
 
 on:
   push:
-    branches: [ master ]
+    branches:
+    - master
   pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     env:
       DOCKER_TAG: ${{ github.sha }}

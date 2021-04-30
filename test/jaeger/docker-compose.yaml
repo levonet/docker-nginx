@@ -17,7 +17,7 @@ services:
     - "14268:14268"
     - "14250:14250"
     - "16686:16686"
-  nginx-test:
+  test:
     build: .
     command: /usr/local/bin/dockerize -wait tcp://nginx:8000 -wait tcp://jaeger:16686 -timeout 10s yarn test
     environment:

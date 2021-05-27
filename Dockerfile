@@ -32,6 +32,8 @@ ENV JAEGER_CLIENT_VERSION v0.7.0
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
 ENV OPENTRACING_MODULE_VERSION v0.16.0
+# https://github.com/nginx-modules/ngx_http_acme_module
+ENV ACME_MODULE_VERSION master
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -41,11 +43,13 @@ RUN set -eux \
     && apk add --no-cache \
         cmake \
         curl \
+        curl-dev \
         g++ \
         gcc \
         gettext \
         git \
         gnupg1 \
+        jansson-dev \
         libc-dev \
         linux-headers \
         make \
@@ -171,6 +175,9 @@ RUN set -eux \
     && git clone --depth=1 --single-branch -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git \
     && (cd njs; CFLAGS="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer" ./configure; make njs; make test) \
     \
+    # Let's Encrypt module for Nginx
+    && git clone --depth=1 --single-branch -b ${ACME_MODULE_VERSION} https://github.com/levonet/ngx_http_acme_module.git \
+    \
     && CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
         ./configure \
             --prefix=/etc/nginx \
@@ -217,6 +224,7 @@ RUN set -eux \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-upsync-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_devel_kit \
+            --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_acme_module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_postgres \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/njs/nginx \
@@ -260,7 +268,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
 RUN apk add --no-cache \
+        jansson \
         libcrypto1.1 \
+        libcurl \
         libintl \
         libpq \
         libssl1.1 \

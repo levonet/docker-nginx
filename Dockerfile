@@ -1,8 +1,8 @@
 FROM alpine:3.12 AS build
 
-ENV NGINX_VERSION 1.21.0
+ENV NGINX_VERSION 1.21.1
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.5.3
+ENV NJS_MODULE_VERSION 0.6.1
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -31,7 +31,7 @@ ENV JAEGER_CLIENT_VERSION v0.7.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.16.0
+ENV OPENTRACING_MODULE_VERSION v0.19.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -144,9 +144,8 @@ RUN set -eux \
     && git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
     && (cd nginx_upstream_check_module; \
         patch -p1 < /tmp/nginx_upstream_check_module-only-worker-proccess.patch; \
-        patch -p1 < /tmp/nginx_upstream_check_module-check_1.16.1+.patch \
     ) \
-    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.16.1+.patch \
+    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.18.0.patch \
     \
     # Brotli
     && git clone --depth=1 https://github.com/google/ngx_brotli.git \
@@ -158,8 +157,9 @@ RUN set -eux \
     && tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
     \
     # A forward proxy module for CONNECT request handling
-    && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
-    && patch -p1 < ngx_http_proxy_connect_module/patch/proxy_connect_rewrite_1018.patch \
+    # && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
+    && git clone --depth=1 --single-branch -b p102101 https://github.com/levonet/ngx_http_proxy_connect_module.git \
+    && patch -p1 < ngx_http_proxy_connect_module/patch/proxy_connect_rewrite_102101.patch \
     \
     # Sync upstreams from consul or others
     && git clone --depth=1 --single-branch -b ${UPSYNC_MODULE_VERSION} https://github.com/weibocom/nginx-upsync-module.git \

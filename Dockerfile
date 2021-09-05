@@ -1,8 +1,8 @@
-FROM alpine:3.12 AS build
+FROM alpine:3.14 AS build
 
-ENV NGINX_VERSION 1.21.1
+ENV NGINX_VERSION 1.21.2
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.6.1
+ENV NJS_MODULE_VERSION 0.6.2
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -31,7 +31,7 @@ ENV JAEGER_CLIENT_VERSION v0.7.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.19.0
+ENV OPENTRACING_MODULE_VERSION v0.20.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -242,9 +242,9 @@ RUN set -eux \
         /usr/lib/nginx/modules/*.so \
         /usr/local/lib/libopentracing.so* \
         /usr/local/lib/libyaml-cpp.so* \
-        /usr/local/lib64/libjaegertracing.so*
+        /usr/local/lib/libjaegertracing.so*
 
-FROM alpine:3.12
+FROM alpine:3.14
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
@@ -254,7 +254,7 @@ COPY --from=build /usr/lib/nginx/ /usr/lib/nginx/
 COPY --from=build /usr/share/nginx /usr/share/nginx
 COPY --from=build /usr/local/lib/libopentracing.so* /usr/local/lib/
 COPY --from=build /usr/local/lib/libyaml-cpp.so* /usr/local/lib/
-COPY --from=build /usr/local/lib64/libjaegertracing.so* /usr/local/lib64/
+COPY --from=build /usr/local/lib/libjaegertracing.so* /usr/local/lib/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
@@ -273,7 +273,7 @@ RUN apk add --no-cache \
     && addgroup -S -g 101 nginx \
     && adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx -u 100 nginx \
     && mkdir -p /var/log/nginx \
-    && ln -sf /usr/local/lib64/libjaegertracing.so /usr/local/lib/libjaegertracing_plugin.so \
+    && ln -sf /usr/local/lib/libjaegertracing.so /usr/local/lib/libjaegertracing_plugin.so \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 

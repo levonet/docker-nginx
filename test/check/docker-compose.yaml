@@ -2,7 +2,7 @@ version: "3"
 
 services:
   nginx:
-    image: levonet/nginx:${DOCKER_TAG:-latest}
+    image: ${DOCKER_IMAGE:-levonet/nginx:${DOCKER_TAG:-latest}}
     ports:
     - "8000:8000"
     volumes:

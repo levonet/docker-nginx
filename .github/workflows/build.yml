@@ -31,6 +31,7 @@ jobs:
         flavor: |
           latest=auto
           suffix=-alpine,onlatest=false
+
     - name: Login to DockerHub
       # if: ${{ github.event_name != 'pull_request' }}
       uses: docker/login-action@v1

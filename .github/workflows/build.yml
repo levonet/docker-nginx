@@ -39,33 +39,33 @@ jobs:
         username: ${{ env.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and export to Docker
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        load: true
-        tags: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+    # - name: Build and export to Docker
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     context: .
+    #     load: true
+    #     tags: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
 
-    - name: Run test
-      env:
-        DOCKER_IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-      run: |
-        cd test
-        make test
+    # - name: Run test
+    #   env:
+    #     DOCKER_IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+    #   run: |
+    #     cd test
+    #     make test
 
-    - name: Build and push
-      # if: ${{ github.event_name != 'pull_request' }}
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+    # - name: Build and push
+    #   # if: ${{ github.event_name != 'pull_request' }}
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     context: .
+    #     push: true
+    #     tags: ${{ steps.meta.outputs.tags }}
+    #     labels: ${{ steps.meta.outputs.labels }}
 
     - name: Docker Hub Description
       # if: ${{ github.event_name != 'pull_request' }}
       uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{ env.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
         repository: levonet/nginx

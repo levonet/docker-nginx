@@ -1,6 +1,6 @@
 FROM alpine:3.14 AS build
 
-ENV NGINX_VERSION 1.21.2
+ENV NGINX_VERSION 1.21.3
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.6.2
 # https://github.com/openresty/echo-nginx-module

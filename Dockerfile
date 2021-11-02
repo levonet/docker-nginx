@@ -1,8 +1,8 @@
 FROM alpine:3.14 AS build
 
-ENV NGINX_VERSION 1.21.3
+ENV NGINX_VERSION 1.21.4
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.6.2
+ENV NJS_MODULE_VERSION 0.7.0
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -27,11 +27,11 @@ ENV UPSYNC_MODULE_VERSION v2.1.3
 # https://github.com/xiaokai-wang/nginx-stream-upsync-module
 ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 # https://github.com/jaegertracing/jaeger-client-cpp
-ENV JAEGER_CLIENT_VERSION v0.7.0
+ENV JAEGER_CLIENT_VERSION v0.8.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.20.0
+ENV OPENTRACING_MODULE_VERSION v0.21.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -157,8 +157,7 @@ RUN set -eux \
     && tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
     \
     # A forward proxy module for CONNECT request handling
-    # && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
-    && git clone --depth=1 --single-branch -b p102101 https://github.com/levonet/ngx_http_proxy_connect_module.git \
+    && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
     && patch -p1 < ngx_http_proxy_connect_module/patch/proxy_connect_rewrite_102101.patch \
     \
     # Sync upstreams from consul or others

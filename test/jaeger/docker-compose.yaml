@@ -10,6 +10,9 @@ services:
     - ./jaeger-config.yaml:/etc/nginx/jaeger-config.yaml
   jaeger:
     image: levonet/jaeger:master-stretch
+    command: ["/opt/bin/jaeger"]
+    environment:
+      SPAN_STORAGE_TYPE: memory
     ports:
     - "6831:6831/udp"
     - "6832:6832/udp"

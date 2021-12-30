@@ -1,6 +1,6 @@
 FROM alpine:3.14 AS build
 
-ENV NGINX_VERSION 1.21.4
+ENV NGINX_VERSION 1.21.5
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.7.0
 # https://github.com/openresty/echo-nginx-module
@@ -19,7 +19,7 @@ ENV RDSJSON_MODULE_VERSION v0.15
 ENV REDIS2_MODULE_VERSION v0.15
 ENV REDIS_MODULE_VERSION 0.3.9
 # https://github.com/openresty/set-misc-nginx-module
-ENV SETMISC_MODULE_VERSION v0.32
+ENV SETMISC_MODULE_VERSION v0.33
 # https://github.com/openresty/srcache-nginx-module
 ENV SRCACHE_MODULE_VERSION v0.32
 # https://github.com/weibocom/nginx-upsync-module
@@ -31,7 +31,7 @@ ENV JAEGER_CLIENT_VERSION v0.8.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.21.0
+ENV OPENTRACING_MODULE_VERSION v0.23.0
 
 COPY *.patch /tmp/
 RUN set -eux \

@@ -1,8 +1,8 @@
-FROM alpine:3.14 AS build
+FROM alpine:3.15 AS build
 
-ENV NGINX_VERSION 1.21.5
+ENV NGINX_VERSION 1.21.6
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.7.0
+ENV NJS_MODULE_VERSION 0.7.2
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -27,7 +27,7 @@ ENV UPSYNC_MODULE_VERSION v2.1.3
 # https://github.com/xiaokai-wang/nginx-stream-upsync-module
 ENV UPSYNC_STREAM_MODULE_VERSION v1.2.2
 # https://github.com/jaegertracing/jaeger-client-cpp
-ENV JAEGER_CLIENT_VERSION v0.8.0
+ENV JAEGER_CLIENT_VERSION v0.9.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
@@ -168,9 +168,15 @@ RUN set -eux \
     \
     # njs scripting language
     && git clone --depth=1 --single-branch -b ${NJS_MODULE_VERSION} https://github.com/nginx/njs.git \
-    && (cd njs; CFLAGS="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer" ./configure; make njs; make test) \
+    && (cd njs; \
+        ./configure \
+            --cc-opt="-O2 -m64 -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIC -fomit-frame-pointer"; \
+        make; \
+        make unit_test; \
+        install -m755 build/njs /usr/bin/ \
+    ) \
     \
-    && CFLAGS="-pipe -m64 -Ofast -flto -mtune=generic -march=x86-64 -fPIE -fPIC -funroll-loops -fstack-protector-strong -mfpmath=sse -msse4.2 -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
+    && CFLAGS="-Ofast -m64 -mtune=generic -march=x86-64 -mfpmath=sse -msse4.2 -pipe -fPIE -fPIC -flto -funroll-loops -fstack-protector-strong -ffast-math -fomit-frame-pointer -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2" \
         ./configure \
             --prefix=/etc/nginx \
             --sbin-path=/usr/sbin/nginx \
@@ -233,7 +239,6 @@ RUN set -eux \
     && mkdir -p /usr/share/nginx/html/ \
     && install -m644 html/index.html /usr/share/nginx/html/ \
     && install -m644 html/50x.html /usr/share/nginx/html/ \
-    && install -m755 njs/build/njs /usr/bin/ \
     && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
     && cp -p ${HUNTER_INSTALL_DIR}/lib/libyaml-cpp.so* /usr/local/lib/ \
     && strip /usr/bin/njs \
@@ -243,7 +248,7 @@ RUN set -eux \
         /usr/local/lib/libyaml-cpp.so* \
         /usr/local/lib/libjaegertracing.so*
 
-FROM alpine:3.14
+FROM alpine:3.15
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx

@@ -2,9 +2,10 @@
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
 - [`1.21.6-alpine`, `1.21-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.21.6/Dockerfile) Mainline version
-- [`1.20.1-alpine`, `1.20-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.20.1/Dockerfile) Stable version
+- [`1.22.0-alpine`, `1.22-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.22.0/Dockerfile) Stable version
 - <details><summary>Older versions</summary>
 
+  - [`1.20.1-alpine`, `1.20-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.20.1/Dockerfile)
   - [`1.19.10-alpine`, `1.19-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.19.10/Dockerfile)
   - [`1.18.0-alpine`, `1.18-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.18.0/Dockerfile)
   - [`1.17.10-alpine`, `1.17-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.17.10/Dockerfile)

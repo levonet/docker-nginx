@@ -1,8 +1,8 @@
 FROM alpine:3.15 AS build
 
-ENV NGINX_VERSION 1.21.6
+ENV NGINX_VERSION 1.22.0
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.7.2
+ENV NJS_MODULE_VERSION 0.7.4
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
@@ -31,7 +31,7 @@ ENV JAEGER_CLIENT_VERSION v0.9.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.23.0
+ENV OPENTRACING_MODULE_VERSION v0.24.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -55,6 +55,8 @@ RUN set -eux \
         postgresql-dev \
         readline-dev \
         zlib-dev \
+    # https://nginx.org/en/pgp_keys.html
+    && curl -fSL https://nginx.org/keys/thresh.key -o nginx_signing.key \
     && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz \
     && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc -o nginx.tar.gz.asc \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -69,8 +71,9 @@ RUN set -eux \
         gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$GPG_KEYS" && found=yes && break; \
     done; \
     test -z "$found" && echo >&2 "error: failed to fetch GPG key $GPG_KEYS" && exit 1; \
-    gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
-    && rm -rf "$GNUPGHOME" nginx.tar.gz.asc \
+    gpg --import nginx_signing.key \
+    && gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
+    && rm -rf "$GNUPGHOME" nginx_signing.key nginx.tar.gz.asc \
     && mkdir -p /usr/src \
     && tar -zxC /usr/src -f nginx.tar.gz \
     && rm nginx.tar.gz \

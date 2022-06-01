@@ -55,6 +55,8 @@ RUN set -eux \
         postgresql-dev \
         readline-dev \
         zlib-dev \
+    # https://nginx.org/en/pgp_keys.html
+    && curl -fSL https://nginx.org/keys/thresh.key -o nginx_signing.key \
     && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz \
     && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz.asc -o nginx.tar.gz.asc \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -69,8 +71,9 @@ RUN set -eux \
         gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$GPG_KEYS" && found=yes && break; \
     done; \
     test -z "$found" && echo >&2 "error: failed to fetch GPG key $GPG_KEYS" && exit 1; \
-    gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
-    && rm -rf "$GNUPGHOME" nginx.tar.gz.asc \
+    gpg --import nginx_signing.key \
+    && gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
+    && rm -rf "$GNUPGHOME" nginx_signing.key nginx.tar.gz.asc \
     && mkdir -p /usr/src \
     && tar -zxC /usr/src -f nginx.tar.gz \
     && rm nginx.tar.gz \

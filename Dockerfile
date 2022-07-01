@@ -1,12 +1,12 @@
-FROM alpine:3.15 AS build
+FROM alpine:3.16 AS build
 
-ENV NGINX_VERSION 1.22.0
+ENV NGINX_VERSION 1.23.0
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.7.4
+ENV NJS_MODULE_VERSION 0.7.5
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.62
 # https://github.com/openresty/headers-more-nginx-module
-ENV HEADERS_MODULE_VERSION v0.33
+ENV HEADERS_MODULE_VERSION master
 # https://github.com/openresty/memc-nginx-module
 ENV MEMC_MODULE_VERSION v0.19
 # https://github.com/vision5/ngx_devel_kit
@@ -17,11 +17,14 @@ ENV POSTGRES_MODULE_VERSION master
 ENV RDSJSON_MODULE_VERSION v0.15
 # https://github.com/openresty/redis2-nginx-module
 ENV REDIS2_MODULE_VERSION v0.15
-ENV REDIS_MODULE_VERSION 0.3.9
+# https://github.com/osokin/ngx_http_redis
+ENV REDIS_MODULE_VERSION ngx-1.23
 # https://github.com/openresty/set-misc-nginx-module
 ENV SETMISC_MODULE_VERSION v0.33
+# https://github.com/levonet/nginx-sticky-module-ng
+ENV STICKY_MODULE_VERSION nginx-1.23.0
 # https://github.com/openresty/srcache-nginx-module
-ENV SRCACHE_MODULE_VERSION v0.32
+ENV SRCACHE_MODULE_VERSION master
 # https://github.com/weibocom/nginx-upsync-module
 ENV UPSYNC_MODULE_VERSION v2.1.3
 # https://github.com/xiaokai-wang/nginx-stream-upsync-module
@@ -45,7 +48,9 @@ RUN set -eux \
         gcc \
         gettext \
         git \
-        gnupg1 \
+        gnupg-dirmngr \
+        gpg \
+        gpg-agent \
         libc-dev \
         linux-headers \
         make \
@@ -141,7 +146,7 @@ RUN set -eux \
     && git clone --depth=1 --single-branch -b ${SETMISC_MODULE_VERSION} https://github.com/openresty/set-misc-nginx-module.git \
     \
     # Sticky
-    && git clone --depth=1 https://github.com/levonet/nginx-sticky-module-ng.git \
+    && git clone --depth=1 --single-branch -b ${STICKY_MODULE_VERSION} https://github.com/levonet/nginx-sticky-module-ng.git \
     \
     # Upstream health check
     && git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
@@ -155,9 +160,7 @@ RUN set -eux \
     && (cd ngx_brotli; git submodule update --init) \
     \
     # Redis
-    && mkdir -p /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis \
-    && curl -fSL https://people.freebsd.org/~osa/ngx_http_redis-${REDIS_MODULE_VERSION}.tar.gz -o ngx_http_redis.tar.gz \
-    && tar -zxC /usr/src/nginx-${NGINX_VERSION}/ngx_http_redis -f ngx_http_redis.tar.gz --strip 1 \
+    && git clone --depth=1 --single-branch -b ${REDIS_MODULE_VERSION} https://github.com/zhuizhuhaomeng/ngx_http_redis.git \
     \
     # A forward proxy module for CONNECT request handling
     && git clone --depth=1 https://github.com/chobits/ngx_http_proxy_connect_module.git \
@@ -251,7 +254,7 @@ RUN set -eux \
         /usr/local/lib/libyaml-cpp.so* \
         /usr/local/lib/libjaegertracing.so*
 
-FROM alpine:3.15
+FROM alpine:3.16
 
 COPY --from=build /etc/nginx /etc/nginx
 COPY --from=build /usr/sbin/nginx /usr/sbin/nginx

@@ -1,7 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.23.1-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.1/Dockerfile) Mainline version
+- [`1.23.2-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.2/Dockerfile) Mainline version
 - [`1.22.0-alpine`, `1.22-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.22.0/Dockerfile) Stable version
 - <details><summary>Older versions</summary>
 
@@ -29,7 +29,7 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 - with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module
 - with [Sync upstreams](https://github.com/weibocom/nginx-upsync-module#readme) dynamic module
 - with [Stream sync upstreams](https://github.com/xiaokai-wang/nginx-stream-upsync-module#readme) dynamic module
-- with [Upstream health check](https://github.com/2Fast2BCn/nginx_upstream_check_module#readme) module
+- with [Upstream health check](https://github.com/yaoweibin/nginx_upstream_check_module#readme) module
 - with [Brotli](https://github.com/google/ngx_brotli#readme) dynamic module
 - with [Various set_xxx directives](https://github.com/openresty/set-misc-nginx-module#readme) dynamic module
 - with [Headers more](https://github.com/openresty/headers-more-nginx-module#readme) dynamic module

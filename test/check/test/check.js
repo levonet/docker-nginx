@@ -46,6 +46,9 @@ describe('check', () => {
             .query({format: 'json'})
         status.should.have.status(200)
         status.should.be.json
+
+console.log(status.body)
+
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(1)
@@ -68,6 +71,9 @@ describe('check', () => {
             .query({format: 'json'})
         status.should.have.status(200)
         status.should.be.json
+
+console.log(status.body)
+
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(0)
@@ -90,6 +96,9 @@ describe('check', () => {
             .query({format: 'json'})
         status.should.have.status(200)
         status.should.be.json
+
+console.log(status.body)
+
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(1)

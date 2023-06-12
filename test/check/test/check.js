@@ -44,11 +44,11 @@ describe('check', () => {
         const status = await chai.request(NGINX_URL)
             .get('/status')
             .query({format: 'json'})
-        status.should.have.status(200)
-        status.should.be.json
 
 console.log(status.body)
 
+        status.should.have.status(200)
+        status.should.be.json
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(1)
@@ -69,11 +69,11 @@ console.log(status.body)
         const status = await chai.request(NGINX_URL)
             .get('/status')
             .query({format: 'json'})
-        status.should.have.status(200)
-        status.should.be.json
 
 console.log(status.body)
 
+        status.should.have.status(200)
+        status.should.be.json
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(0)
@@ -94,11 +94,11 @@ console.log(status.body)
         const status = await chai.request(NGINX_URL)
             .get('/status')
             .query({format: 'json'})
-        status.should.have.status(200)
-        status.should.be.json
 
 console.log(status.body)
 
+        status.should.have.status(200)
+        status.should.be.json
         status.body.should.be.an('object')
         status.body.should.have.property('servers')
         status.body.servers.up.should.be.equal(1)

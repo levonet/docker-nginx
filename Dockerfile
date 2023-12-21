@@ -249,6 +249,12 @@ RUN set -eux \
     && install -m644 html/50x.html /usr/share/nginx/html/ \
     && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
     && cp -p ${HUNTER_INSTALL_DIR}/lib/libyaml-cpp.so* /usr/local/lib/ \
+    && ls -l /usr/bin/njs \
+        /usr/sbin/nginx \
+        /usr/lib/nginx/modules/*.so \
+        /usr/local/lib/libopentracing.so* \
+        /usr/local/lib/libyaml-cpp.so* \
+        /usr/local/lib/libjaegertracing.so* \
     && strip /usr/bin/njs \
         /usr/sbin/nginx \
         /usr/lib/nginx/modules/*.so \

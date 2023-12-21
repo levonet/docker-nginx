@@ -1,6 +1,6 @@
 FROM alpine:3.16 AS build
 
-ENV NGINX_VERSION 1.23.1
+ENV NGINX_VERSION 1.23.2
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.7.8
 # https://github.com/google/ngx_brotli
@@ -151,11 +151,6 @@ RUN set -eux \
     && git clone --depth=1 --single-branch -b ${STICKY_MODULE_VERSION} https://github.com/levonet/nginx-sticky-module-ng.git \
     \
     # Upstream health check
-    # https://github.com/xiaokai-wang/nginx_upstream_check_module/commits/master
-    # https://github.com/yaoweibin/nginx_upstream_check_module
-    # https://github.com/levonet/docker-nginx/actions/runs/5244195340/jobs/9469852681?pr=43
-    # && git clone --depth=1 https://github.com/kaneleven/nginx_upstream_check_module.git \
-    # && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     && git clone --depth=1 https://github.com/levonet/nginx_upstream_check_module.git \
     && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     \

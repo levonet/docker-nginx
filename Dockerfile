@@ -155,7 +155,7 @@ RUN set -eux \
     # && git clone --depth=1 https://github.com/kaneleven/nginx_upstream_check_module.git \
     # && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     && git clone --depth=1 https://github.com/levonet/nginx_upstream_check_module.git \
-    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.18.0.patch \
+    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     \
     # Brotli
     && git clone --depth=1 https://github.com/google/ngx_brotli.git \

@@ -3,6 +3,8 @@ FROM alpine:3.16 AS build
 ENV NGINX_VERSION 1.23.1
 # https://github.com/nginx/njs
 ENV NJS_MODULE_VERSION 0.7.8
+# https://github.com/google/ngx_brotli
+ENV BROTLI_MODULE_VERSION 6e975bcb015f62e1f303054897783355e2a877dc
 # https://github.com/openresty/echo-nginx-module
 ENV ECHO_MODULE_VERSION v0.63
 # https://github.com/openresty/headers-more-nginx-module
@@ -158,8 +160,8 @@ RUN set -eux \
     && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     \
     # Brotli
-    && git clone --depth=1 https://github.com/google/ngx_brotli.git \
-    && (cd ngx_brotli; git submodule update --init) \
+    && git clone https://github.com/google/ngx_brotli.git \
+    && (cd ngx_brotli; git checkout ${BROTLI_MODULE_VERSION}; git submodule update --init) \
     \
     # Redis
     && git clone --depth=1 --single-branch -b ${REDIS_MODULE_VERSION} https://github.com/zhuizhuhaomeng/ngx_http_redis.git \
@@ -249,12 +251,6 @@ RUN set -eux \
     && install -m644 html/50x.html /usr/share/nginx/html/ \
     && ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
     && cp -p ${HUNTER_INSTALL_DIR}/lib/libyaml-cpp.so* /usr/local/lib/ \
-    && ls -l /usr/bin/njs \
-        /usr/sbin/nginx \
-        /usr/lib/nginx/modules/*.so \
-        /usr/local/lib/libopentracing.so* \
-        /usr/local/lib/libyaml-cpp.so* \
-        /usr/local/lib/libjaegertracing.so* \
     && strip /usr/bin/njs \
         /usr/sbin/nginx \
         /usr/lib/nginx/modules/*.so \

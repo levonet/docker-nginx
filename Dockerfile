@@ -1,16 +1,18 @@
 FROM alpine:3.16 AS build
 
-ENV NGINX_VERSION 1.23.1
+ENV NGINX_VERSION 1.23.2
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.7.6
+ENV NJS_MODULE_VERSION 0.7.8
+# https://github.com/google/ngx_brotli
+ENV BROTLI_MODULE_VERSION 6e975bcb015f62e1f303054897783355e2a877dc
 # https://github.com/openresty/echo-nginx-module
-ENV ECHO_MODULE_VERSION v0.62
+ENV ECHO_MODULE_VERSION v0.63
 # https://github.com/openresty/headers-more-nginx-module
 ENV HEADERS_MODULE_VERSION v0.34
 # https://github.com/openresty/memc-nginx-module
 ENV MEMC_MODULE_VERSION v0.19
 # https://github.com/vision5/ngx_devel_kit
-ENV NDK_MODULE_VERSION v0.3.1
+ENV NDK_MODULE_VERSION v0.3.2
 # https://github.com/openresty/ngx_postgres
 ENV POSTGRES_MODULE_VERSION master
 # https://github.com/openresty/rds-json-nginx-module
@@ -34,7 +36,7 @@ ENV JAEGER_CLIENT_VERSION v0.9.0
 # https://github.com/opentracing/opentracing-cpp
 ENV OPENTRACING_LIB_VERSION v1.6.0
 # https://github.com/opentracing-contrib/nginx-opentracing
-ENV OPENTRACING_MODULE_VERSION v0.26.0
+ENV OPENTRACING_MODULE_VERSION v0.27.0
 
 COPY *.patch /tmp/
 RUN set -eux \
@@ -149,15 +151,12 @@ RUN set -eux \
     && git clone --depth=1 --single-branch -b ${STICKY_MODULE_VERSION} https://github.com/levonet/nginx-sticky-module-ng.git \
     \
     # Upstream health check
-    && git clone --depth=1 https://github.com/2Fast2BCn/nginx_upstream_check_module.git \
-    && (cd nginx_upstream_check_module; \
-        patch -p1 < /tmp/nginx_upstream_check_module-only-worker-proccess.patch; \
-    ) \
-    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.18.0.patch \
+    && git clone --depth=1 https://github.com/levonet/nginx_upstream_check_module.git \
+    && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
     \
     # Brotli
-    && git clone --depth=1 https://github.com/google/ngx_brotli.git \
-    && (cd ngx_brotli; git submodule update --init) \
+    && git clone https://github.com/google/ngx_brotli.git \
+    && (cd ngx_brotli; git checkout ${BROTLI_MODULE_VERSION}; git submodule update --init) \
     \
     # Redis
     && git clone --depth=1 --single-branch -b ${REDIS_MODULE_VERSION} https://github.com/zhuizhuhaomeng/ngx_http_redis.git \

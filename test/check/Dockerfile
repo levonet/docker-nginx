@@ -1,4 +1,4 @@
-FROM node:10-slim AS base
+FROM node:14-slim AS base
 
 ENV DOCKERIZE_VERSION v0.6.1
 RUN set -eux \

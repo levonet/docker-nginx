@@ -1,8 +1,8 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.23.2-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.2/Dockerfile) Mainline version
-- [`1.22.0-alpine`, `1.22-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.22.0/Dockerfile) Stable version
+- [`1.23.4-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.4/Dockerfile) Mainline version
+- [`1.24.0-alpine`, `1.24-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.24.0/Dockerfile) Stable version
 - <details><summary>Older versions</summary>
 
   - [`1.21.6-alpine`, `1.21-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.21.6/Dockerfile)
@@ -111,7 +111,7 @@ Sample configurations and module tests are located in a folder named `test`.
 
 To run tests, go to the folder `test` and run command `make`.
 
-To start a specific example, go to an example folder and run `docker-compose up`.
+To start a specific example, go to an example folder and run `docker compose up`.
 
 ## Image Variants
 

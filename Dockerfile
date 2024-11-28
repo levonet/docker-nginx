@@ -1,8 +1,8 @@
 FROM alpine:3.16 AS build
 
-ENV NGINX_VERSION 1.23.2
+ENV NGINX_VERSION 1.23.4
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 0.7.8
+ENV NJS_MODULE_VERSION 0.7.12
 # https://github.com/google/ngx_brotli
 ENV BROTLI_MODULE_VERSION 6e975bcb015f62e1f303054897783355e2a877dc
 # https://github.com/openresty/echo-nginx-module
@@ -54,6 +54,7 @@ RUN set -eux \
         gpg \
         gpg-agent \
         libc-dev \
+        libxslt-dev \
         linux-headers \
         make \
         openssl-dev \

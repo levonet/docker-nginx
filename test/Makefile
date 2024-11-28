@@ -2,7 +2,7 @@ DOCKER_TAG ?= latest
 DOCKER_IMAGE ?= levonet/nginx:$(DOCKER_TAG)
 TESTS = check jaeger njs proxy_connect redis sticky
 DOCKER ?= docker
-DOCKER_COMPOSE ?= docker-compose
+DOCKER_COMPOSE ?= docker compose
 
 .PHONY: all build test clean $(TESTS)
 all: build test

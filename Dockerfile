@@ -54,8 +54,6 @@ RUN set -eux \
         gpg \
         gpg-agent \
         libc-dev \
-        libxml2-dev \
-        libxslt-dev \
         linux-headers \
         make \
         openssl-dev \

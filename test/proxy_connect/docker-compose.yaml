@@ -14,3 +14,7 @@ services:
       PROXY_PORT: 3128
     depends_on:
     - nginx
+networks:
+  cont:
+    driver:  bridge
+    enable_ipv6: false

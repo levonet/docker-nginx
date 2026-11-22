@@ -1,6 +1,6 @@
 DOCKER_TAG ?= latest
 DOCKER_IMAGE ?= levonet/nginx:$(DOCKER_TAG)
-TESTS = check jaeger njs proxy_connect redis sticky
+TESTS = check jaeger njs proxy_connect redis
 DOCKER ?= docker
 DOCKER_COMPOSE ?= docker compose
 

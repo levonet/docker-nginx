@@ -24,7 +24,7 @@ ENV REDIS_MODULE_VERSION 0.4.2
 # https://github.com/openresty/set-misc-nginx-module
 ENV SETMISC_MODULE_VERSION v0.34
 # https://github.com/levonet/nginx-sticky-module-ng
-ENV STICKY_MODULE_VERSION nginx-1.23.0
+# ENV STICKY_MODULE_VERSION nginx-1.23.0
 # https://github.com/openresty/srcache-nginx-module
 ENV SRCACHE_MODULE_VERSION v0.34
 # https://github.com/weibocom/nginx-upsync-module
@@ -147,8 +147,8 @@ RUN set -eux \
     && git clone --depth=1 --single-branch -b ${SETMISC_MODULE_VERSION} https://github.com/openresty/set-misc-nginx-module.git \
     \
     # Sticky
-    && git clone --depth=1 --single-branch -b ${STICKY_MODULE_VERSION} https://github.com/levonet/nginx-sticky-module-ng.git \
-    \
+    # && git clone --depth=1 --single-branch -b ${STICKY_MODULE_VERSION} https://github.com/levonet/nginx-sticky-module-ng.git \
+    # \
     # Upstream health check
     && git clone --depth=1 https://github.com/levonet/nginx_upstream_check_module.git \
     && patch -p1 < /usr/src/nginx-${NGINX_VERSION}/nginx_upstream_check_module/check_1.20.1+.patch \
@@ -221,7 +221,7 @@ RUN set -eux \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/headers-more-nginx-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/memc-nginx-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-opentracing/opentracing \
-            --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
+            # --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-sticky-module-ng \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-stream-upsync-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/nginx-upsync-module \
             --add-dynamic-module=/usr/src/nginx-${NGINX_VERSION}/ngx_brotli \

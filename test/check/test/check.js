@@ -44,6 +44,10 @@ describe('check', () => {
         const status = await chai.request(NGINX_URL)
             .get('/status')
             .query({format: 'json'})
+
+        // FIXIT: flaky test
+        console.log(status.body)
+
         status.should.have.status(200)
         status.should.be.json
         status.body.should.be.an('object')

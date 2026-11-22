@@ -1,6 +1,6 @@
-FROM node:14-slim AS base
+FROM node:21-slim AS base
 
-ENV DOCKERIZE_VERSION v0.6.1
+ENV DOCKERIZE_VERSION v0.16.0
 RUN set -eux \
     && apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl \

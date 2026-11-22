@@ -1,10 +1,12 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`latest` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/master/Dockerfile)
-- [`1.23.2-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.2/Dockerfile) Mainline version
-- [`1.22.0-alpine`, `1.22-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.22.0/Dockerfile) Stable version
+- [`1.30.7-alpine`, `1.30-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.30.7/Dockerfile) Mainline version
+- [`1.30.7-alpine`, `1.30-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.30.7/Dockerfile) Stable version
 - <details><summary>Older versions</summary>
 
+  - [`1.23.2-alpine`, `1.23-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.23.2/Dockerfile)
+  - [`1.22.0-alpine`, `1.22-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.22.0/Dockerfile)
   - [`1.21.6-alpine`, `1.21-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.21.6/Dockerfile)
   - [`1.20.1-alpine`, `1.20-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.20.1/Dockerfile)
   - [`1.19.10-alpine`, `1.19-alpine` (*Dockerfile*)](https://github.com/levonet/docker-nginx/blob/v1.19.10/Dockerfile)
@@ -26,7 +28,7 @@ The difference from the [official Nginx docker image](https://hub.docker.com/_/n
 
 - x86-64 CPU architecture only
 - with [njs scripting language](http://nginx.org/en/docs/njs/) dynamic module
-- with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module
+<!-- - with [Sticky](https://github.com/levonet/nginx-sticky-module-ng) dynamic module -->
 - with [Sync upstreams](https://github.com/weibocom/nginx-upsync-module#readme) dynamic module
 - with [Stream sync upstreams](https://github.com/xiaokai-wang/nginx-stream-upsync-module#readme) dynamic module
 - with [Upstream health check](https://github.com/levonet/nginx_upstream_check_module#readme) module
@@ -111,7 +113,7 @@ Sample configurations and module tests are located in a folder named `test`.
 
 To run tests, go to the folder `test` and run command `make`.
 
-To start a specific example, go to an example folder and run `docker-compose up`.
+To start a specific example, go to an example folder and run `docker compose up`.
 
 ## Image Variants
 

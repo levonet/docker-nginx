@@ -1,5 +1,4 @@
-version: "3"
-
+---
 services:
   nginx:
     image: ${DOCKER_IMAGE:-levonet/nginx:latest}

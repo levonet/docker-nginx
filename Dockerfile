@@ -2,7 +2,7 @@ FROM alpine:3.16 AS build
 
 ENV NGINX_VERSION 1.30.7
 # https://github.com/nginx/njs
-ENV NJS_MODULE_VERSION 1.0.2
+ENV NJS_MODULE_VERSION 0.7.8
 # https://github.com/google/ngx_brotli
 ENV BROTLI_MODULE_VERSION 6e975bcb015f62e1f303054897783355e2a877dc
 # https://github.com/openresty/echo-nginx-module
